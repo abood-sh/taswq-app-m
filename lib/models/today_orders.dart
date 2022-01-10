@@ -347,6 +347,8 @@ class ToAddress {
 }
 */
 
+import 'package:logger/logger.dart';
+
 class TodayOrder {
   TodayOrder({
     this.status,

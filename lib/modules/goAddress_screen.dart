@@ -26,16 +26,14 @@ import 'package:tik_laen_taswaq2/shared/cubit/states.dart';
 
 class GoAddressScreen extends StatefulWidget {
   Order? order;
-
-  GoAddressScreen({this.order});
+  int? index;
+  GoAddressScreen({this.order, this.index});
 
   @override
   _GoAddressScreenState createState() => _GoAddressScreenState();
-
 }
 
 class _GoAddressScreenState extends State<GoAddressScreen> {
-
   var myMarkers = HashSet<Marker>();
   var refreshKey = GlobalKey<RefreshIndicatorState>();
   Order order = Order();
@@ -43,7 +41,6 @@ class _GoAddressScreenState extends State<GoAddressScreen> {
   Directions? _info;
   Timer? timer;
   Position? currentPosition;
-
 
   Future<void> getMyLocation() async {
     Position position1 = await Geolocator.getCurrentPosition(
@@ -79,18 +76,16 @@ class _GoAddressScreenState extends State<GoAddressScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     double? fromlatudide =
-    double.parse(widget.order!.fromAddress?.lat ?? '31.515106853596972');
+        double.parse(widget.order!.fromAddress?.lat ?? '31.515106853596972');
     double? fromlongtuide =
-    double.parse(widget.order!.fromAddress?.lng ?? '34.4370002686346');
+        double.parse(widget.order!.fromAddress?.lng ?? '34.4370002686346');
     double? tolatudide =
-    double.parse(widget.order!.toAddress?.lat ?? '31.515106853596972');
+        double.parse(widget.order!.toAddress?.lat ?? '31.515106853596972');
     double? tolongtuide =
-    double.parse(widget.order!.toAddress?.lng ?? '34.4370002686346');
+        double.parse(widget.order!.toAddress?.lng ?? '34.4370002686346');
 
     /* print('##################');
     print('$fromlatudide + $fromlongtuide + $tolatudide + $tolongtuide');
@@ -100,9 +95,9 @@ class _GoAddressScreenState extends State<GoAddressScreen> {
     // createPolyLine(31.51185984005637, 34.43524073950763,31.514612948959932, 34.43978976578175);
     createPolyLine(fromlatudide, fromlongtuide, tolatudide, tolongtuide);
 
-    return  BlocConsumer<ShopCubit, ShopStates>(
+    return BlocConsumer<ShopCubit, ShopStates>(
       listener: (context, state) {
-        if (state is ShopSuccessTrackState){
+        if (state is ShopSuccessTrackState) {
           showToast(text: 'تم التتبع', state: ToastStates.SUCCESS);
         }
       },
@@ -113,7 +108,7 @@ class _GoAddressScreenState extends State<GoAddressScreen> {
           textDirection: TextDirection.rtl,
           child: Scaffold(
             floatingActionButton: FloatingActionButton(
-              onPressed: () async{
+              onPressed: () async {
                 setState(() {
                   ShopCubit.get(context).balance!;
                   ShopCubit.get(context).todayOrders!;
@@ -122,30 +117,30 @@ class _GoAddressScreenState extends State<GoAddressScreen> {
                   widget.order!;
                   widget.order!.status!;
                   widget.order!.price!;
-
                 });
               },
               child: InkWell(
-                onTap: () {
-                //  ShopCubit.get(context).todayOrders?.status;
-                  print('todayOrders status${widget.order?.status}');
-                //  ShopCubit.get(context).todayOrders!;
-               //   ShopCubit.get(context).getTodayOrder();
-                //  ShopCubit.get(context).getBalance();
-                 // Order().status;
-                },
+                  onTap: () {
+                    //  ShopCubit.get(context).todayOrders?.status;
+                    print('todayOrders status${widget.order?.status}');
+                    //  ShopCubit.get(context).todayOrders!;
+                    //   ShopCubit.get(context).getTodayOrder();
+                    //  ShopCubit.get(context).getBalance();
+                    // Order().status;
+                  },
                   child: InkWell(
                       onTap: () {
                         HomeScreen().createState();
                         HomeScreen();
-                        print('////////////${widget.order!.status}////////////');
+                        print(
+                            '////////////${widget.order!.status}////////////');
                       },
                       child: Icon(Icons.refresh))),
               elevation: 0,
               backgroundColor: Colors.orange,
             ),
             body: RefreshWidgetGoAddress(
-              onRefresh: () async{
+              onRefresh: () async {
                 widget.order!;
                 widget.order!.status!;
                 ShopCubit.get(context).getTodayOrder();
@@ -205,7 +200,7 @@ class _GoAddressScreenState extends State<GoAddressScreen> {
                                 infoWindow: InfoWindow(
                                   title: widget.order!.fromId?.name ?? '-',
                                   snippet:
-                                  widget.order!.fromAddress!.address ?? '-',
+                                      widget.order!.fromAddress!.address ?? '-',
                                 ),
                               ),
                             );
@@ -217,7 +212,7 @@ class _GoAddressScreenState extends State<GoAddressScreen> {
                                 infoWindow: InfoWindow(
                                   title: widget.order?.toAddress?.name ?? '-',
                                   snippet:
-                                  widget.order?.toAddress?.address ?? '-',
+                                      widget.order?.toAddress?.address ?? '-',
                                 ),
                               ),
                             );
@@ -244,93 +239,103 @@ class _GoAddressScreenState extends State<GoAddressScreen> {
                     ),
                   ),
                   SizedBox(height: 20),
-                  (widget.order!.status == 0)
+                  //  (widget.order!.status == 0)
+                  (ShopCubit.get(context)
+                              .todayOrders!
+                              .order![widget.index!]
+                              .status) ==
+                          0
                       ? defaultButton(
-                      function: () async {
-                        show1();
-                        await getMyLocation();
-                        setState(() {
-                          ShopCubit.get(context).postTrackUser(
-                            id: widget.order?.id,
-                            lat: currentPosition?.longitude.toString(),
-                            lng: currentPosition?.latitude.toString(),
-                          );
-                        });
-                        setState(() {
-                          widget.order!.status!;
-                          order.status!;
-                        });
-                        print(
-                            '  تاكيد استلام المنتج ${currentPosition?.longitude} ${currentPosition?.latitude}');
-                      },
-                      width: 250,
-                      text: 'تاكيد استلام المنتج',
-                      style: TextStyle(color: Colors.white),
-                      decoration: BoxDecoration(
-                          color: defaultColor,
-                          borderRadius: BorderRadius.circular(15)))
-                      : (widget.order?.price == null || widget.order?.price == '0' )
-                      ? defaultButton(
-                      function: () {
-                        showDialog(
-                          context: context,
-                          barrierColor: Colors.black12,
-                          builder: (context) {
-                            return SingleChildScrollView(
-                              child: AlertDialogRequestPrice(
-                                  order: widget.order
-                              ),
-                            );
-
+                          function: () async {
+                            show1();
+                            await getMyLocation();
+                            setState(() {
+                              ShopCubit.get(context).postTrackUser(
+                                id: widget.order?.id,
+                                lat: currentPosition?.longitude.toString(),
+                                lng: currentPosition?.latitude.toString(),
+                              );
+                            });
+                            setState(() {
+                              widget.order!.status!;
+                              order.status!;
+                            });
+                            print(
+                                '  تاكيد استلام المنتج ${currentPosition?.longitude} ${currentPosition?.latitude}');
                           },
-                        );
-                        setState(() {
-                          widget.order!;
-                          widget.order!.status!;
-                          widget.order?.price!;
+                          width: 250,
+                          text: 'تاكيد استلام المنتج',
+                          style: TextStyle(color: Colors.white),
+                          decoration: BoxDecoration(
+                              color: defaultColor,
+                              borderRadius: BorderRadius.circular(15)))
+                      // : (widget.order?.price == null || widget.order?.price == '0' )
+                      : ((ShopCubit.get(context)
+                                      .todayOrders!
+                                      .order![widget.index!]
+                                      .price) ==
+                                  null ||
+                              (ShopCubit.get(context)
+                                      .todayOrders!
+                                      .order![widget.index!]
+                                      .price) ==
+                                  '0')
+                          ? defaultButton(
+                              function: () {
+                                showDialog(
+                                  context: context,
+                                  barrierColor: Colors.black12,
+                                  builder: (context) {
+                                    return SingleChildScrollView(
+                                      child: AlertDialogRequestPrice(
+                                          order: widget.order),
+                                    );
+                                  },
+                                );
+                                setState(() {
+                                  widget.order!;
+                                  widget.order!.status!;
+                                  widget.order?.price!;
 
-
-                          ShopCubit.get(context).getTodayOrder();
-                          ShopCubit.get(context).getBalance();
-
-                        });
-                        /*ShopCubit.get(context)
+                                  ShopCubit.get(context).getTodayOrder();
+                                  ShopCubit.get(context).getBalance();
+                                });
+                                /*ShopCubit.get(context)
                                       .getRequestPrice(order!.id!);*/
-                      },
-                      width: 250,
-                      text: 'طلب التسعير',
-                      style: TextStyle(color: Colors.white),
-                      decoration: BoxDecoration(
-                          color: defaultColor,
-                          borderRadius: BorderRadius.circular(15)))
-                  //     (widget.order!.status == 2 || widget.order!.status != 1)
+                              },
+                              width: 250,
+                              text: 'طلب التسعير',
+                              style: TextStyle(color: Colors.white),
+                              decoration: BoxDecoration(
+                                  color: defaultColor,
+                                  borderRadius: BorderRadius.circular(15)))
+                          //     (widget.order!.status == 2 || widget.order!.status != 1)
 
-                      : defaultButton(
-                    function: () async {
-                      show2();
-                      await getMyLocation();
-                      ShopCubit.get(context).postTrackUser(
-                        id: widget.order?.id,
-                        lat: currentPosition?.longitude.toString(),
-                        lng: currentPosition?.latitude.toString(),
-                      );
-                      setState(() {
-                        widget.order!.status!;
-                        widget.order!.id!;
-                        widget.order!.paidPrice!;
-                      });
-                      print(
-                          '  تاكيد تسليم المنتج ${currentPosition?.longitude} ${currentPosition?.latitude}');
-                    },
-                    width: 250,
-                    text: 'تاكيد تسليم المنتج',
-                    style: TextStyle(color: Colors.white),
-                    decoration: BoxDecoration(
-                        color: defaultColor,
-                        borderRadius: BorderRadius.circular(15)),
-                  ),
+                          : defaultButton(
+                              function: () async {
+                                show2();
+                                await getMyLocation();
+                                ShopCubit.get(context).postTrackUser(
+                                  id: widget.order?.id,
+                                  lat: currentPosition?.longitude.toString(),
+                                  lng: currentPosition?.latitude.toString(),
+                                );
+                                setState(() {
+                                  widget.order!.status!;
+                                  widget.order!.id!;
+                                  widget.order!.paidPrice!;
+                                });
+                                print(
+                                    '  تاكيد تسليم المنتج ${currentPosition?.longitude} ${currentPosition?.latitude}');
+                              },
+                              width: 250,
+                              text: 'تاكيد تسليم المنتج',
+                              style: TextStyle(color: Colors.white),
+                              decoration: BoxDecoration(
+                                  color: defaultColor,
+                                  borderRadius: BorderRadius.circular(15)),
+                            ),
                   SizedBox(height: 10),
-
                 ],
               ),
             ),

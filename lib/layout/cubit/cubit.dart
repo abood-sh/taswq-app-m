@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 import 'package:tik_laen_taswaq2/layout/cubit/states.dart';
 import 'package:tik_laen_taswaq2/models/accept_order.dart';
 import 'package:tik_laen_taswaq2/models/add_information_to_dialog.dart';
@@ -49,6 +50,8 @@ class ShopCubit extends Cubit<ShopStates> {
       url: TODAY_ORDER,
       token: 'Bearer $token',
     ).then((value) {
+    Logger().e("***********************************");
+//Logger().e(value.data);
       //print(value.data);
       todayOrders = TodayOrder.fromJson(value.data);
       print(value.data);

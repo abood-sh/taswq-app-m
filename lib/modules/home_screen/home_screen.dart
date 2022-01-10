@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 import 'package:tik_laen_taswaq2/layout/cubit/cubit.dart';
 import 'package:tik_laen_taswaq2/layout/cubit/states.dart';
 import 'package:tik_laen_taswaq2/models/balance.dart';
@@ -38,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ShopCubit.get(context).todayOrders!;
       ShopCubit.get(context).getTodayOrder();
       ShopCubit.get(context).getBalance();
+
     }));
 
 
@@ -156,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           itemCount: model!.order!.length,
                           itemBuilder: (context, index) {
                             return listViewText(
-                                context, model!.order![index]);
+                                context, model!.order![index],index);
                           },
                         )
                             : Center(
@@ -179,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
         });
   }
 
-  Widget listViewText(context, Order? model) {
+  Widget listViewText(context, Order? model,int index) {
     return Column(
       children: [
         containerHomePage(
@@ -233,6 +235,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               MaterialPageRoute(
                                   builder: (context) => BillScreen(
                                     order: model,
+                                    index :index
                                   )));
                         },
                         text: 'التفاصيل',

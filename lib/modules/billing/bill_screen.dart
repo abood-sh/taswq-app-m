@@ -13,8 +13,9 @@ import 'package:tik_laen_taswaq2/shared/styles/color.dart';
 
 class BillScreen extends StatefulWidget {
   Order? order;
+  int? index;
 
-  BillScreen({this.order});
+  BillScreen({this.order, this.index});
 
   @override
   _BillScreenState createState() => _BillScreenState();
@@ -191,7 +192,8 @@ class _BillScreenState extends State<BillScreen> {
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   GoAddressScreen(
-                                                      order: widget.order)));
+                                                      order: widget.order,
+                                                      index:widget.index)));
                                       ShopCubit.get(context)
                                           .postAcceptOrder(widget.order!.id!);
 
